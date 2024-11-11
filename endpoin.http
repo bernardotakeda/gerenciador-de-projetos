@@ -1,0 +1,43 @@
+
+###
+
+GET http://localhost:3333/projetos
+
+###
+
+GET http://localhost:3333/projetos/concluidas
+
+###
+
+GET http://localhost:3333/projetos/060212ad-a79f-4aca-888d-74f0c18168bb
+
+###
+
+POST http://localhost:3333/projetos
+Content-Type: application/json
+
+{
+    "titulo": "Desenvolvimento de Aplicativo Móvel",
+    "descricao": "Projeto para criar um aplicativo de gerenciamento financeiro pessoal para Android e iOS",
+    "concluido": "false"
+}
+
+###
+
+PUT http://localhost:3333/projetos/6b9c8ca2-3b7e-46d4-9533-85da2c1b8c21
+Content-Type: application/json
+
+{
+    "titulo": "Implementação de CRM",
+    "descricao": "Configurar e customizar um sistema de CRM para melhorar a gestão de relacionamento com clientes",
+    "concluido": "true"
+    
+}
+
+###
+PUT http://localhost:3333/concluir/6b9c8ca2-3b7e-46d4-9533-85da2c1b8c21
+
+
+###
+
+DELETE http://localhost:3333/projetos/16f5b61d-3702-4ee4-8ec2-b5c6ddcd0956

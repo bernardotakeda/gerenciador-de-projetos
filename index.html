@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Projetos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Projetos</h1>
+
+        <!-- Formulário de Adicionar Projeto -->
+        <form id="task-form">
+            <input type="text" id="titulo" placeholder="Título do projeto" required>
+            <textarea id="descricao" placeholder="Descrição" required></textarea>
+            <button type="submit">Adicionar Projeto</button>
+        </form>
+
+        <div id="projetos-container">
+            <h2>Projetos Pendentes</h2>
+            <ul id="projetos-list"></ul>
+        </div>
+
+        <div id="concluidos-container">
+            <h2>Projetos Concluídos</h2>
+            <ul id="concluidos-list"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
