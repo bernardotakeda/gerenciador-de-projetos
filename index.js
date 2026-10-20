@@ -103,10 +103,10 @@ app.put('/projetos/:id', async (req, res) => {
 
           console.log('Atualizando projeto:', projetoID, alteracoes);
 
-          await database.updateProjeto(projetoD, alteracoes);
+          await database.updateProjeto(projetoID, alteracoes);
           res.status(200).send("Projeto atualizado com sucesso.");
      } catch (error) {
-          if (error.message === 'Projeto não encontrada') {
+          if (error.message === 'Projeto não encontrado') {
                res.status(404).send("Projeto não encontrado.");
           } else {
                console.error("Erro ao atualizar projeto!", error);
