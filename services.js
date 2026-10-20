@@ -15,13 +15,13 @@ export class DatabaseProjetos {
           return projetos;
      }
 
-     // Listar projetos não concluidos
+     // Listar projetos concluídos
      async listProjetoByConcluido() {
           const projetos = await query('SELECT * FROM projetos WHERE concluido = true');
           return projetos;
      }
 
-     // Listar projetos não concluidos
+     // Listar projetos não concluídos
      async listProjetoByNaoConcluido() {
           const projetos = await query('SELECT * FROM projetos WHERE concluido = false ');
           return projetos;
@@ -33,8 +33,8 @@ export class DatabaseProjetos {
           const { titulo, descricao, concluido } = projeto;
 
           await query(
-               'INSERT INTO projetos (id, titulo, descricao, concluido) VALUES (?, ?, ?, ?, ?, ?)',
-               [id, titulo, descricao, concluido]
+               'INSERT INTO projetos (id, titulo, descricao, concluido) VALUES (?, ?, ?, ?)',
+               [id, titulo, descricao, concluido ?? false]
           );
      }
 
@@ -66,7 +66,7 @@ export class DatabaseProjetos {
           await query('DELETE FROM projetos WHERE id = ?', [id]);
      }
 
-     // Marcar concluido
+     // Marcar concluído
 
      async concluirProjeto(id) {
           const [projeto] = await query('SELECT * FROM projetos WHERE id = ?', [id]);
