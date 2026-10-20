@@ -1,33 +1,131 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Projetos</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Gerenciamento de Projetos</h1>
+import express from 'express';
+import cors from 'cors';
+import { DatabaseProjetos} from './services.js';
 
-        <!-- Formulário de Adicionar Projeto -->
-        <form id="task-form">
-            <input type="text" id="titulo" placeholder="Título do projeto" required>
-            <textarea id="descricao" placeholder="Descrição" required></textarea>
-            <button type="submit">Adicionar Projeto</button>
-        </form>
+const app = express();
+const database = new DatabaseProjetos();
 
-        <div id="projetos-container">
-            <h2>Projetos Pendentes</h2>
-            <ul id="projetos-list"></ul>
-        </div>
+app.use(cors({
+     origin: '*',
+     methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
 
-        <div id="concluidos-container">
-            <h2>Projetos Concluídos</h2>
-            <ul id="concluidos-list"></ul>
-        </div>
-    </div>
+app.use(express.json());
 
-    <script src="script.js"></script>
-</body>
-</html>
+app.listen(3333, () => {
+     console.log('Servidor rodando na porta 3333');
+});
+
+//----------------ROTAS--DO--CRUD---------------------//
+
+
+// Criar (rota POST)
+
+app.post('/projetos', async (req, res) => {
+     try {
+          const body = req.body;
+          await database.createProjeto(body);
+          res.status(201).send("Projeto criado com sucesso!");
+     } catch (error) {
+          console.error("Erro ao criar projeto!", error);
+          res.status(500).send("Erro ao criar projeto.");
+     }
+});
+
+// Mostrar os projetos (rota GET)
+
+app.get('/projetos', async (req, res) => {
+     try {
+          const projetos = await database.listProjetoByNaoConcluido();
+          res.status(200).json(projetos);
+     } catch (error) {
+          console.error("Erro ao buscar projetos!", error);
+          res.status(500).send("Erro ao buscar projetos.");
+     }
+});
+app.get('/projetos/concluidos', async (req, res) => {
+     try {
+          const projetos = await database.listProjetoByConcluido();
+          res.status(200).json(projetos);
+     } catch (error) {
+          console.error("Erro ao buscar projetos!", error);
+          res.status(500).send("Erro ao buscar projetos.");
+     }
+});
+
+// Mostrar projeto por ID (rota GET com ID)
+
+app.get("/projetos/:id", async (req, res) => {
+     try {
+          const projetoID = req.params.id;
+          const projeto = await database.listProjetoByID(projetoID);
+          if (projeto.length > 0) {
+               res.status(200).json(projeto);
+          } else {
+               res.status(404).send("Projeto não encontrado.");
+          }
+     } catch (error) {
+          console.error("Erro ao buscar projeto por ID!", error);
+          res.status(500).send("Erro ao buscar projeto por ID.");
+     }
+});
+
+// Deletar projeto (rota DELETE)
+
+app.delete("/projetos/:id", async (req, res) => {
+     try {
+          const projetoID = req.params.id;
+
+          await database.deleteProjeto(projetoID);
+          res.status(200).send("Projeto deletado com sucesso.");
+     } catch (error) {
+          if (error.message === 'Projeto não encontrado') {
+               res.status(404).send("Projeto não encontrada.");
+          } else {
+               console.error("Erro ao deletar projeto!", error);
+               res.status(500).send("Erro ao deletar projeto.");
+          }
+     }
+});
+
+
+// Atualizar projeto (rota PUT)
+app.put('/projetos/:id', async (req, res) => {
+     try {
+          const projetoID = req.params.id;
+          const { titulo, descricao, concluido } = req.body;
+
+          const alteracoes = {
+               titulo,
+               descricao,
+               concluido: concluido !== undefined ? concluido : false,
+          };
+
+          console.log('Atualizando projeto:', projetoID, alteracoes);
+
+          await database.updateProjeto(projetoID, alteracoes);
+          res.status(200).send("Projeto atualizado com sucesso.");
+     } catch (error) {
+          if (error.message === 'Projeto não encontrado') {
+               res.status(404).send("Projeto não encontrado.");
+          } else {
+               console.error("Erro ao atualizar projeto!", error);
+               res.status(500).send("Erro ao atualizar projeto.");
+          }
+     }
+});
+
+app.put('/concluir/:id', async (req, res) => {
+     try {
+          const projetoID = req.params.id;
+          await database.concluirProjeto(projetoID);
+          res.status(200).send("Projeto concluída com sucesso.");
+     } catch (error) {
+          if (error.message === 'Projeto não encontrada') {
+               res.status(404).send("Projeto não encontrada.");
+          } else {
+               console.error("Erro ao concluir projeto!", error);
+               res.status(500).send("Erro ao concluir projeto.");
+          }
+     }
+});
